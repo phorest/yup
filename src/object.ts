@@ -395,7 +395,7 @@ export default class ObjectSchema<
     });
   }
 
-  noUnknown(noAllow = true, message = locale.noUnknown) {
+  noUnknown(noAllow = true, message?: string|(() => any) ) {
     if (typeof noAllow === 'string') {
       message = noAllow;
       noAllow = true;
@@ -404,7 +404,7 @@ export default class ObjectSchema<
     let next = this.test({
       name: 'noUnknown',
       exclusive: true,
-      message: message,
+      message: () => message || locale.noUnknown,
       test(value) {
         if (value == null) return true;
         const unknownKeys = unknown(this.schema, value);
@@ -421,8 +421,8 @@ export default class ObjectSchema<
     return next;
   }
 
-  unknown(allow = true, message = locale.noUnknown) {
-    return this.noUnknown(!allow, message);
+  unknown(allow = true, message?:string) {
+    return this.noUnknown(!allow, () => message || locale.noUnknown);
   }
 
   transformKeys(fn: (key: string) => string) {
